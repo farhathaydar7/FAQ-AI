@@ -1,29 +1,28 @@
 <?php
 require_once __DIR__ . '/../V1/config.php';
 
-class Faq {
+class FaqSkeleton {
 
-    public function __construct(
-        private $question = null,
-        private $answer = null,
-        private $id = null
-    ) {}
-
+    
+    private function __construct() {}
     private static function getDB() {
         return new PDO(DB_DSN, DB_USER, DB_PASS);
     }
 
    
     
-    public function create() {
-        $db = self::getDB();
-        $stmt = $db->prepare("INSERT INTO faqs (question, answer) VALUES (?, ?)");
-        $success = $stmt->execute([$this->question, $this->answer]);
-        
-        if($success) $this->id = $db->lastInsertId();
-        return $success;
+    
+    public static function create($faqModel) {
+      $db = self::getDB();
+      $stmt = $db->prepare("INSERT INTO faqs (question, answer) VALUES (?, ?)");
+      $success = $stmt->execute([
+        $faqModel->getQuestion(),
+        $faqModel->getAnswer()
+      ]);
+      
+      if($success) $faqModel->setId($db->lastInsertId());
+      return $success;
     }
-
     public function update() {
         $db = self::getDB();
         $stmt = $db->prepare("UPDATE faqs SET question = ?, answer = ? WHERE id = ?");
@@ -45,7 +44,7 @@ class Faq {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if($row) {
-            $faq = new Faq();
+            $faq = new FaqModel();
             $faq->id = $row['id'];
             $faq->question = $row['question'];
             $faq->answer = $row['answer'];
@@ -57,7 +56,16 @@ class Faq {
     public static function getAll() {
         $db = self::getDB();
         $stmt = $db->query("SELECT * FROM faqs");
-        return $stmt->fetchAll(PDO::FETCH_CLASS, 'Faq');
+        $faqRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $faqs = [];
+        foreach ($faqRows as $row) {
+            $faqs[] = new Faq(
+                $row['id'],
+                $row['question'],
+                $row['answer']
+            );
+        }
+        return $faqs;
     }
 
     // Getters and Setters

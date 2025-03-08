@@ -13,16 +13,16 @@ class UserSkeleton {
 
  
     
-    public static function create($user) {
+    public static function create($userModel) {
         $db = self::getDB();
         $stmt = $db->prepare("INSERT INTO users (full_name, username, password) VALUES (?, ?, ?)");
         $success = $stmt->execute([
-            $user->getFullName(),
-            $user->getUsername(),
-            hash('sha256', $user->getPassword())
+            $userModel->getFullName(),
+            $userModel->getUsername(),
+            hash('sha256', $userModel->getPassword())
         ]);
         
-        if($success) $user->setId($db->lastInsertId());
+        if($success) $userModel->setId($db->lastInsertId());
         return $success;
     }
 
