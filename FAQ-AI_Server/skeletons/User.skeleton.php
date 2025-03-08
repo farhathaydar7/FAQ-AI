@@ -69,6 +69,24 @@ class UserSkeleton {
         return $stmt->fetchAll(PDO::FETCH_CLASS, 'User');
     }
 
+    public static function findByUsername($username) {
+        $db = self::getDB();
+        $stmt = $db->prepare("SELECT * FROM users WHERE username = ?");
+        $stmt->execute([$username]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if($row) {
+            $user = new User(
+                $row['id'],
+                $row['full_name'],
+                $row['username'],
+                $row['password']
+            );
+            return $user;
+        }
+        return null;
+    }
+
     public function getId() { return $this->id; }
     public function getFullName() { return $this->fullName; }
     public function setFullName($name) { $this->fullName = $name; }
