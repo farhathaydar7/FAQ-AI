@@ -1,17 +1,13 @@
 <?php
 
 class User {
-    private $id;
-    private $fullName;
-    private $username;
-    private $password;
 
-    public function __construct($id, $fullName, $username, $password) {
-        $this->id = $id;
-        $this->fullName = $fullName;
-        $this->username = $username;
-        $this->password = $password;
-    }
+    public function __construct(
+        private $id,
+        private $fullName,
+        private $username,
+        private $password
+    ) { }
 
     // Getters
     public function getId() {

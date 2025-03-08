@@ -1,18 +1,10 @@
 <?php
-require_once 'config/database.php'; 
+require_once __DIR__ . '/../V1/config.php';
 
-class User {
-    private $id;
-    private $fullName;
-    private $username;
-    private $password;
-
+class UserSkeleton {
+ 
     
-    public function __construct($fullName = null, $username = null, $password = null) {
-        $this->fullName = $fullName;
-        $this->username = $username;
-        $this->password = $password;
-    }
+    private function __construct() {}
 
   
     private static function getDB() {
@@ -21,16 +13,16 @@ class User {
 
  
     
-    public function create() {
+    public static function create($user) {
         $db = self::getDB();
         $stmt = $db->prepare("INSERT INTO users (full_name, username, password) VALUES (?, ?, ?)");
         $success = $stmt->execute([
-            $this->fullName,
-            $this->username,
-            password_hash($this->password, PASSWORD_DEFAULT) 
+            $user->getFullName(),
+            $user->getUsername(),
+            hash('sha256', $user->getPassword())
         ]);
         
-        if($success) $this->id = $db->lastInsertId();
+        if($success) $user->setId($db->lastInsertId());
         return $success;
     }
 
@@ -40,7 +32,7 @@ class User {
         return $stmt->execute([
             $this->fullName,
             $this->username,
-            password_hash($this->password, PASSWORD_DEFAULT),
+            hash('sha256', $this->password),
             $this->id
         ]);
     }
@@ -60,14 +52,15 @@ class User {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if($row) {
-            $user = new User();
-            $user->id = $row['id'];
-            $user->fullName = $row['full_name'];
-            $user->username = $row['username'];
-            $user->password = $row['password'];
-            return $user;
-        }
-        return null;
+                    $user = new User(
+                        $row['id'],
+                        $row['full_name'],
+                        $row['username'],
+                        $row['password']
+                    );
+                    return $user;
+                }
+                return null;
     }
 
     public static function getAll() {

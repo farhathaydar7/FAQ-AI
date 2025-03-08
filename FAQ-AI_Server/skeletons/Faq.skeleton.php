@@ -1,15 +1,13 @@
 <?php
-require_once 'config/database.php';
+require_once __DIR__ . '/../V1/config.php';
 
 class Faq {
-    private $id;
-    private $question;
-    private $answer;
 
-    public function __construct($question = null, $answer = null) {
-        $this->question = $question;
-        $this->answer = $answer;
-    }
+    public function __construct(
+        private $question = null,
+        private $answer = null,
+        private $id = null
+    ) {}
 
     private static function getDB() {
         return new PDO(DB_DSN, DB_USER, DB_PASS);
