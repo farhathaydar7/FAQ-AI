@@ -1,8 +1,8 @@
 <?php
 require_once '../universal.php';
 require_once dirname(__FILE__) . '/config.php';
-require_once api . 'models/Faq.model.php';
-require_once api . 'skeletons/Faq.skeleton.php';
+require_once '../models/Faq.model.php';
+require_once '../skeletons/Faq.skeleton.php';
 
 header('Content-Type: application/json');
 
@@ -10,7 +10,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $question = $_POST["question"];
     $answer = $_POST["answer"];
 
-    $faq = new Faq(null, $question, $answer);
+    $faq = new FaqModel();
+    $faq->setQuestion($question);
+    $faq->setAnswer($answer);
 
     if (FaqSkeleton::create($faq)) {
         echo json_encode(["message" => "Question added successfully"]);

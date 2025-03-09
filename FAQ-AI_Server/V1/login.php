@@ -1,7 +1,7 @@
 <?php
 require_once '../universal.php';
 require_once dirname(__FILE__) . '/config.php';
-require_once api . 'models/User.model.php';
+require_once '../models/User.model.php';
 require_once api . 'skeletons/User.skeleton.php';
 
 // Read raw POST data
