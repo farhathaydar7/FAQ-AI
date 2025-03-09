@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New FAQ</title>
     <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/nabar.css">
+
 </head>
 <body>
+    <div id="navbar-container"></div>
     <div class="container">
         <h1 class="page-title">Add New FAQ</h1>
         <form id="addFaqForm" class="form faq-form">
@@ -23,6 +26,13 @@
         </form>
     </div>
     <script src="../js/axios.min.js"></script>
+    <script>
+        fetch('navbar.html')
+            .then(response => response.text())
+            .then(navbarContent => {
+                document.getElementById('navbar-container').innerHTML = navbarContent;
+            });
+    </script>
     <script src="../js/faq.js" type="module"></script>
 </body>
 </html>
