@@ -2,7 +2,7 @@
 require_once '../universal.php';
 require_once dirname(__FILE__) . '/config.php';
 require_once '../models/User.model.php';
-require_once api . 'skeletons/User.skeleton.php';
+require_once '../skeletons/User.skeleton.php';
 
 // Read raw POST data
 $data = json_decode(file_get_contents('php://input'), true);
