@@ -1,4 +1,4 @@
-import axios from '../axios.min.js';
+
 import { api_server } from '../../universal.js';
  
 class UserModel {
@@ -41,9 +41,13 @@ class UserModel {
 
     static async create(user) {
         try {
-            const response = await axios.post(api_server + '/V1/register.php', user, {
+            const formData = new URLSearchParams();
+            formData.append('fullName', user.fullName);
+            formData.append('username', user.username);
+            formData.append('password', user.password);
+            const response = await axios.post(api_server + '/V1/register.php', formData, {
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/x-www-form-urlencoded'
                 }
             });
             const userData = response.data;

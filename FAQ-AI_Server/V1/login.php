@@ -3,21 +3,19 @@ require_once '../universal.php';
 require_once dirname(__FILE__) . '/config.php';
 require_once api . 'models/User.model.php';
 require_once api . 'skeletons/User.skeleton.php';
+
+// Read raw POST data
+$data = json_decode(file_get_contents('php://input'), true);
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST["username"];
-    $password = $_POST["password"];
+    // Get username and password from JSON
+    $username = $data['username'];
+    $password = $data['password'];
 
     $user = UserSkeleton::findByUsername($username);
 
     if ($user) {
         if (hash('sha256', $password) === $user->getPassword()) {
-            $secretKey  = SECRET_KEY; //secret key 
-            $payload = [
-                'user_id' => $user->getId(),
-                'username' => $user->getUsername(),
-                'exp' => time() + 3600  // Token expiration time (1 hour)
-            ];
-
             echo json_encode([
                 'status' => 'success',
                 'message' => 'Login successful!'

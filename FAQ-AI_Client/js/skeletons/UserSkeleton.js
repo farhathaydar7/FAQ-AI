@@ -1,26 +1,32 @@
-import axios from '../js/axios.min.js';
-import UserModel from '../js/models/UserModel.js';
+
+import UserModel from '../models/UserModel.js';
+import { api_server } from '../../universal.js';
 
 class UserSkeleton {
     constructor() {}
 
     static async login(username, password) {
-        const formData = new URLSearchParams();
-        formData.append('username', username);
-        formData.append('password', password);
+        const userData = {
+            username: username,
+            password: password
+        };
 
-        const response = await axios.post(api_server + '/V1/login.php', formData, {
+        console.log('Sending login request to server:', userData);
+
+        const response = await axios.post(api_server + '/V1/login.php', JSON.stringify(userData), {
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
             },
         });
 
         if (response.status < 200 || response.status >= 300) {
+            console.error(`HTTP error! status: ${response.status}`);
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         try {
             const data = response.data;
+            console.log('Login response data:', data);
             if (data.status === 'success') {
                 return true; // Login successful
             } else {
@@ -33,50 +39,55 @@ class UserSkeleton {
         }
     }
 
-
     static async findByUsername(username) {
-        const response = await axios.post(api_server + '/V1/login.php', `username=${encodeURIComponent(username)}`, {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
+        const response = await axios.get(api_server + '/V1/get_user.php', {
+            params: {
+                username: username
+            }
         });
 
-        if (response.status !== 200) {
+        if (response.status < 200 || response.status >= 300) {
+            console.error(`HTTP error! status: ${response.status}`);
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const text = JSON.stringify(response.data);
-        if (text.startsWith('User not found.')) {
+        const data = response.data;
+        console.log('FindByUsername response data:', data);
+        if (data.status === 'error' && data.message === 'User not found.') {
             return null;
         }
 
         try {
-            const data = response.data;
             return new UserModel(data.id, data.fullName, data.username, null); // Password should not be exposed
         } catch (e) {
-            console.error('Could not parse response as JSON: ', text);
+            console.error('Could not parse response as JSON: ', data);
             return null;
         }
     }
 
     static async create(userModel) {
-        const formData = new URLSearchParams();
-        formData.append('fullName', userModel.getFullName());
-        formData.append('username', userModel.getUsername());
-        formData.append('password', userModel.getPassword());
+        console.log('Sending registration request to server:', userModel);
+        
+        const userData = {
+            fullName: userModel.fullName,
+            username: userModel.username,
+            password: userModel.password
+        };
 
-        const response = await axios.post(api_server + '/V1/register.php', formData, {
+        const response = await axios.post(api_server + '/V1/register.php', JSON.stringify(userData), {
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
             },
         });
 
-        if (!response.ok) {
+        if (response.status < 200 || response.status >= 300) {
+            console.error(`HTTP error! status: ${response.status}`);
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         try {
-            const data = await response.json(); // Expecting JSON response from register.php
+            const data = response.data;
+            console.log('Registration response data:', data);
             if (data.status === 'success') {
                 return true; // Registration successful
             } else {
@@ -84,7 +95,7 @@ class UserSkeleton {
                 return false; // Registration failed
             }
         } catch (error) {
-            console.error('Error parsing JSON response:', error);
+            console.error('Error parsing text response:', error);
             return false; // Registration failed due to error
         }
     }

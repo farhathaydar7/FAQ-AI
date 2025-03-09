@@ -1,5 +1,4 @@
-import { api_server } from '../../universal.js';
-import axios from '../axios.min.js';
+import axios from '../axios.min';
 
 class FaqModel {
     constructor(id, question, answer) {
@@ -8,41 +7,38 @@ class FaqModel {
         this.answer = answer;
     }
 
-    getId() {
-        return this.id;
+    toJSON() {
+        return {
+            id: this.id,
+            question: this.question,
+            answer: this.answer
+        };
     }
 
-    getQuestion() {
-        return this.question;
-    }
-
-    getAnswer() {
-        return this.answer;
-    }
-
-    setId(id) {
-        this.id = id;
-    }
-
-    setQuestion(question) {
-        this.question = question;
-    }
-
-    setAnswer(answer) {
-        this.answer = answer;
+    static fromJSON(json) {
+        return new FaqModel(json.id, json.question, json.answer);
     }
 
     static async getAll() {
         try {
-            const response = await axios(api_server + '/V1/getq.php');
-            if (!response.ok) {
+            const response = await axios.get('/V1/getq.php');
+            if (response.status < 200 || response.status >= 300) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const faqs = await response.json();
-            return faqs.map(faq => new FaqModel(faq.id, faq.question, faq.answer));
+            return response.data.map(faq => FaqModel.fromJSON(faq));
         } catch (error) {
             console.error('Error fetching FAQs:', error);
-            return []; // Return an empty array or handle error as needed
+            return [];
+        }
+    }
+
+    static async search(query) {
+        try {
+            const response = await axios.get(`/V1/searchq.php?query=${encodeURIComponent(query)}`);
+            return response.data.map(faq => FaqModel.fromJSON(faq));
+        } catch (error) {
+            console.error('Error searching FAQs:', error);
+            return [];
         }
     }
 }

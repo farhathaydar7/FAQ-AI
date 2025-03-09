@@ -1,69 +1,47 @@
-import FaqModel from '../models/FaqModel.js';
-import axios from '../js/axios.min.js';
+import FaqModel from './FaqModel.js';
+import axios from '../axios.min.js';
 
 class FaqSkeleton {
-    constructor() {}
-
     static async create(faqModel) {
-        const formData = new URLSearchParams();
-        formData.append('question', faqModel.getQuestion());
-        formData.append('answer', faqModel.getAnswer());
-
-        const response = await axios.post('V1/addq.php', formData, { // Assuming addq.php handles FAQ creation
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-        });
-
-        if (response.status < 200 || response.status >= 300) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const text = response.data;
-        // Assuming server returns 'FAQ created successfully' or similar on success
-        return text.startsWith('FAQ created successfully'); // Adjust based on actual server response
-    }
-
-    static async findById(id) {
-        const response = await axios.get(`V1/getq.php?id=${encodeURIComponent(id)}`); // Assuming getq.php can fetch by ID
-
-        if (response.status < 200 || response.status >= 300) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const text = response.data;
-        if (text.startsWith('FAQ not found')) { // Adjust based on actual server response if not found
-            return null;
-        }
-
         try {
-            const data = JSON.parse(text);
-            return new FaqModel(data.id, data.question, data.answer);
-        } catch (e) {
-            console.error('Could not parse response as JSON: ', text);
+            const response = await axios.post('/V1/addq.php', faqModel.toJSON(), {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            return response.data.success;
+        } catch (error) {
+            console.error('Error creating FAQ:', error);
+            return false;
+        }
+    }
+    static async search(query) {
+        try {
+            const response = await axios.get(`/V1/searchq.php?query=${encodeURIComponent(query)}`, {
+                headers: {
+                    'Accept': 'application/json',
+                }
+            });
+            return response.data.map(faq => FaqModel.fromJSON(faq));
+        } catch (error) {
+            console.error('Error searching FAQs:', error);
+            return [];
+        }
+    }
+    static async findById(id) {
+        try {
+            const response = await axios.get(`/V1/getq.php?id=${encodeURIComponent(id)}`);
+            return FaqModel.fromJSON(response.data);
+        } catch (error) {
+            console.error('Error finding FAQ:', error);
             return null;
         }
     }
 
     static async getAll() {
-        const response = await axios.get('V1/getq.php'); // Fetching all FAQs - adjust endpoint if needed
-
-        if (response.status < 200 || response.status >= 300) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const text = response.data;
-        try {
-            const data = JSON.parse(text);
-            return data.map(faqData => new FaqModel(faqData.id, faqData.question, faqData.answer));
-        } catch (e) {
-            console.error('Could not parse response as JSON: ', text);
-            return [];
-        }
+        return FaqModel.getAll();
     }
-
-    // Update and delete functionalities would be added similarly,
-    // assuming corresponding server-side endpoints exist.
 }
 
 export default FaqSkeleton;

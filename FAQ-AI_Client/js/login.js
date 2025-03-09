@@ -1,4 +1,4 @@
-import axios from './axios.min.js';
+
 import UserSkeleton from './skeletons/UserSkeleton.js';
 import { api_server } from '../universal.js';
 
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (loginSuccessful) {
                 messageDiv.textContent = 'Login successful!';
                 messageDiv.className = 'success-message';
-                
+                window.location.href = 'home.html';
             } else {
                 messageDiv.textContent = 'Login failed. Please check your credentials.';
                 messageDiv.className = 'error-message';
