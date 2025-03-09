@@ -5,8 +5,8 @@ header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type");
 require_once '../universal.php';
 require_once dirname(__FILE__) . '/config.php';
-require_once api . 'models/User.model.php';
-require_once api . 'skeletons/User.skeleton.php';
+require_once '../models/User.model.php';
+require_once '../skeletons/User.skeleton.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $json = file_get_contents('php://input');
