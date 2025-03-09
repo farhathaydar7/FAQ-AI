@@ -2,15 +2,11 @@ CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     full_name VARCHAR(255) NOT NULL,
     username VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(64) NOT NULL, 
-    
+    password VARCHAR(64) NOT NULL
 );
-
 
 CREATE TABLE faqs (
     id INT PRIMARY KEY AUTO_INCREMENT,
     question VARCHAR(255) NOT NULL,
-    answer TEXT NOT NULL,
-
+    answer TEXT NOT NULL
 );
-

@@ -1,3 +1,3 @@
-export const api_server = "http://localhost/FAQ-AI/FAQ-AI/FAQ-AI_Server";
+export const api_server = "/api";
 const api_client = "./";
 const axios_import ="./js/axios.min.js";
