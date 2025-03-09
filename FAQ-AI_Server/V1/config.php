@@ -2,7 +2,7 @@
 
 define('DB_DSN', 'mysql:host=localhost;dbname=faqai');
 define('DB_USER', 'root');
-define('DB_PASS', 'Haydar12#$5');
+define('DB_PASS', 'password');
 
 
 try {
