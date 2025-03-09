@@ -1,0 +1,158 @@
+/* navbar.css */
+:root {
+    --gradient-primary: linear-gradient(135deg, #4299e1 0%, #48bb78 100%);
+    --text-primary: #2d3436;
+    --text-hover: #4a5568;
+    --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 6px 12px rgba(0, 0, 0, 0.15);
+    --transition-speed: 0.3s;
+}
+
+/* Navbar Container */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: white;
+    box-shadow: var(--shadow-light);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* Logo Styles */
+.navbar-logo img {
+    height: 40px;
+    transition: transform var(--transition-speed) ease;
+}
+
+.navbar-logo:hover img {
+    transform: scale(1.1);
+}
+
+/* Navigation Links */
+.navbar-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-links a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    position: relative;
+    transition: all var(--transition-speed) ease;
+}
+
+/* Hover Effect with Gradient Underline */
+.navbar-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--gradient-primary);
+    transition: all var(--transition-speed) ease;
+}
+
+.navbar-links a:hover::after {
+    width: 100%;
+    left: 0;
+}
+
+.navbar-links a:hover {
+    color: var(--text-hover);
+}
+
+/* Active Link Style */
+.navbar-links a.active {
+    background: var(--gradient-primary);
+    color: white;
+    border-radius: 50px;
+    padding: 0.5rem 1.5rem;
+    box-shadow: var(--shadow-medium);
+}
+
+/* Mobile Menu Toggle */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.menu-toggle .bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px auto;
+    background: var(--text-primary);
+    transition: all var(--transition-speed) ease;
+}
+
+/* Mobile Menu Styles */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 1rem;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .navbar-links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        gap: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height var(--transition-speed) ease;
+        box-shadow: var(--shadow-light);
+    }
+
+    .navbar-links.active {
+        max-height: 500px;
+    }
+
+    .navbar-links li {
+        padding: 0;
+    }
+
+    .navbar-links a {
+        display: block;
+        padding: 1rem;
+        border-radius: 0;
+    }
+
+    .navbar-links a::after {
+        display: none;
+    }
+
+    .navbar-links a:hover {
+        background: #f5f7fb;
+    }
+
+    /* Hamburger Animation */
+    .menu-toggle.active .bar:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+
+    .menu-toggle.active .bar:nth-child(2) {
+        opacity: 0;
+    }
+
+    .menu-toggle.active .bar:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+}

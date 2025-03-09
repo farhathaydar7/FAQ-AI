@@ -2,7 +2,7 @@
 
 define('DB_DSN', 'mysql:host=localhost;dbname=faqai');
 define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_PASS', 'password');
 
 
 try {
@@ -12,4 +12,5 @@ try {
     die("Database connection failed: " . $e->getMessage());
 }
 
+define('SECRET_KEY', 'Hell0_WRLD$$961HFFR');
 ?>

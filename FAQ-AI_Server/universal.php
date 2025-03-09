@@ -1,1 +1,1 @@
-<?php const api ="../"; ?>
+<?php const api = "./"; ?>
